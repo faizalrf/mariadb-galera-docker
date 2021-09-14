@@ -1,9 +1,10 @@
 #!/bin/bash
 
-CMD="/usr/local/bin/docker-entrypoint.sh mysqld"
+StartUp="/usr/local/bin/docker-entrypoint.sh mysqld"
 
+# If BOOTSTRAP argument is passed as 1 then start the node as galera_new_cluster
 if [ ${BOOTSTRAP} -eq 1 ]; then
-   CMD="$CMD --wsrep-new-cluster"
+   StartUp="${StartUp} --wsrep-new-cluster"
 fi
 
-exec $CMD
+exec ${StartUp}

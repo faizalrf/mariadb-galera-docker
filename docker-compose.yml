@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
     node1:
         build:
@@ -11,6 +11,7 @@ services:
         volumes:
             - ./config/dc-galera-1.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
             - ./config/dc-server-1.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+            #- ./grastat/g1:/var/lib/mysql/grastate.dat
         hostname: dcg1
         container_name: dcg1
         networks:
@@ -32,6 +33,7 @@ services:
         volumes:
             - ./config/dc-galera-2.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
             - ./config/dc-server-2.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+            #- ./grastat/g2:/var/lib/mysql/grastate.dat
         hostname: dcg2
         container_name: dcg2
         networks:
@@ -53,6 +55,7 @@ services:
         volumes:
             - ./config/dc-galera-3.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
             - ./config/dc-server-3.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+            #- ./grastat/g3:/var/lib/mysql/grastate.dat
         hostname: dcg3
         container_name: dcg3
         networks:
