@@ -1,0 +1,96 @@
+version: '2'
+services:
+    node1:
+        build:
+            context: .
+        image: mdbg
+        privileged: true
+        environment:
+            MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
+            BOOTSTRAP: 1
+        volumes:
+            - ./config/dc-galera-1.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
+            - ./config/dc-server-1.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+        hostname: dcg1
+        container_name: dcg1
+        networks:
+            static-network:
+                ipv4_address: 172.20.0.2
+        ports:
+            - "4001:3306"
+
+    node2:
+        build:
+            context: .
+        image: mdbg
+        privileged: true
+        depends_on:
+            - node1
+        environment:
+            MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
+            BOOTSTRAP: 0
+        volumes:
+            - ./config/dc-galera-2.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
+            - ./config/dc-server-2.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+        hostname: dcg2
+        container_name: dcg2
+        networks:
+            static-network:
+                ipv4_address: 172.20.0.3
+        ports:
+            - "4002:3306"
+
+    node3:
+        build:
+            context: .
+        image: mdbg
+        privileged: true
+        depends_on:
+            - node1
+        environment:
+            MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
+            BOOTSTRAP: 0
+        volumes:
+            - ./config/dc-galera-3.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
+            - ./config/dc-server-3.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+        hostname: dcg3
+        container_name: dcg3
+        networks:
+            static-network:
+                ipv4_address: 172.20.0.4
+        ports:
+            - "4003:3306"
+#    maxscale:
+#        image: mdbmxscl:latest
+#        privileged: true
+#        cap_add:
+#            - SYS_ADMIN
+#        security_opt:
+#            - seccomp:unconfined
+#        tmpfs:
+#            - /run
+#            - /run/lock
+#        volumes:
+#            - /Users/Shared:/mdb
+#            - /sys/fs/cgroup:/sys/fs/cgroup:ro
+#        depends_on:
+#            - master
+#            - slave1
+#            - slave2
+#            - slave3
+#        hostname: mdbmxscl
+#        container_name: mdbmxscl
+#        networks:
+#            static-network:
+#                ipv4_address: 172.20.0.6
+#        ports:
+#            - "4006:4006"  # readwrite port
+#            - "4008:4008"  # readonly port
+#            - "8989:8989"  # REST API port
+networks:
+    static-network:
+        ipam:
+            config:
+                - subnet: 172.20.0.0/16
+                  ip_range: 172.20.5.0/24
+                  gateway: 172.20.5.254
