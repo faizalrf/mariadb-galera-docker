@@ -1,4 +1,4 @@
-FROM mariadb:latest
+FROM mariadb:10.6
 
 COPY startup.sh /startup.sh
 

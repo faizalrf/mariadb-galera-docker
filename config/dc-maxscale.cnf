@@ -1,0 +1,75 @@
+[maxscale]
+# The number of worker threads that are handling the events coming from the kernel.
+threads=auto
+# Enable or disable the substitution of environment variables in the MaxScale configuration file
+substitute_variables=true
+# Send output to Syslog 0 Disabled / 1 Enabled
+syslog=0
+# Enable or disable the logging of messages whose syslog priority is info
+log_info=off
+# Enable or disable the logging of messages whose syslog priority is notice
+log_notice=on
+# Enable or disable the logging of messages whose syslog priority is warning
+log_warning=off
+ 
+# List of servers in the Cluster
+[Galera-1]
+type=server
+address=172.20.0.2
+port=3306
+protocol=MariaDBBackend
+priority=1
+ 
+[Galera-2]
+type=server
+address=172.20.0.3
+port=3306
+protocol=MariaDBBackend
+priority=2
+ 
+[Galera-3]
+type=server
+address=172.20.0.4
+port=3306
+protocol=MariaDBBackend
+priority=3
+ 
+# Monitoring for the Galera server nodes
+[Galera-Monitor]
+type=monitor
+module=galeramon
+servers=Galera-1,Galera-2,Galera-3
+user=mxs
+password=password
+monitor_interval=1000
+use_priority=true
+available_when_donor=true
+ 
+# This will ensure that the current master remains the master as long as it's up and dunning
+disable_master_failback=true
+backend_connect_timeout=3s
+backend_write_timeout=3s
+backend_read_timeout=3s
+
+# Failver script for setting up dynamic slaves to a remove MaxScale node
+script=/var/lib/maxscale/monitor.sh --initiator=$INITIATOR --parent=$PARENT --children=$CHILDREN --event=$EVENT --node_list=$NODELIST --list=$LIST --master_list=$MASTERLIST --slave_list=$SLAVELIST --synced_list=$SYNCEDLIST
+ 
+# Galera Read/Write Splitter service
+[Galera-RW-Service]
+type=service
+router=readwritesplit
+servers=Galera-1,Galera-2,Galera-3
+user=mxs
+password=password
+master_reconnection=true
+transaction_replay=true
+transaction_replay_retry_on_deadlock=true
+master_failure_mode=error_on_write
+ 
+# Galera cluster listener
+[Galera-Listener]
+type=listener
+service=Galera-RW-Service
+protocol=MariaDBClient
+port=4006
+address=0.0.0.0
