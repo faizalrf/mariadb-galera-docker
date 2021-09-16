@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "Shutting Down MaxScale!"
+./maxsale/docker-compose stop
+sleep 5
+echo "Restarting Cluster!"
+./galera/docker-compose restart
+sleep 5
+echo "Starting Up MaxScale!"
+./maxsale/docker-compose start

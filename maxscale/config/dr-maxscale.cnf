@@ -1,4 +1,7 @@
 [maxscale]
+admin_host=0.0.0.0
+admin_secure_gui=false
+logdir=/var/log/maxscale
 # The number of worker threads that are handling the events coming from the kernel.
 threads=auto
 # Enable or disable the substitution of environment variables in the MaxScale configuration file

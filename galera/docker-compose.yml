@@ -11,16 +11,15 @@ services:
         volumes:
             - ./config/dc-galera-1.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
             - ./config/dc-server-1.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
-            #- ./galera/dc/grastate1.dat:/var/lib/mysql/grastate.dat
-            - ./init:/tmp/init
+            - ../init:/tmp/init
+            #- ./data:/var/lib/mysql
         hostname: dcg1
         container_name: dcg1
         networks:
             static-network:
                 ipv4_address: 172.20.0.2
         ports:
-            - "4001:3306"
-
+            - "4002:3306"
     dc-node2:
         build:
             context: .
@@ -34,14 +33,14 @@ services:
         volumes:
             - ./config/dc-galera-2.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
             - ./config/dc-server-2.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
-            #- ./galera/dc/grastate2.dat:/var/lib/mysql/grastate.dat
+            #- ./data:/var/lib/mysql
         hostname: dcg2
         container_name: dcg2
         networks:
             static-network:
                 ipv4_address: 172.20.0.3
         ports:
-            - "4002:3306"
+            - "4003:3306"
 
     dc-node3:
         build:
@@ -56,37 +55,14 @@ services:
         volumes:
             - ./config/dc-galera-3.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
             - ./config/dc-server-3.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
-            #- ./galera/dc/grastate3.dat:/var/lib/mysql/grastate.dat
+            #- ./data:/var/lib/mysql
         hostname: dcg3
         container_name: dcg3
         networks:
             static-network:
                 ipv4_address: 172.20.0.4
         ports:
-            - "4003:3306"
-    dc-maxscale:
-        image: mariadb/maxscale:2.5
-        privileged: true
-        cap_add:
-            - SYS_ADMIN
-        security_opt:
-            - seccomp:unconfined
-        volumes:
-            - ./config/dc-maxscale.cnf:/etc/maxscale.cnf
-            - ./init/monitor.sh:/var/lib/maxscale/monitor.sh
-        depends_on:
-            - dc-node1
-            - dc-node2
-            - dc-node3
-        hostname: dcmxs
-        container_name: dcmxs
-        networks:
-            static-network:
-                ipv4_address: 172.20.0.5
-        ports:
-            - "4006:4006"  # readwrite port
-            - "4008:4008"  # readonly port
-            - "8989:8989"  # REST API port
+            - "4004:3306"
     dr-node1:
         build:
             context: .
@@ -96,17 +72,16 @@ services:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 1
         volumes:
-            - ./config/dc-galera-1.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
-            - ./config/dc-server-1.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
-            #- ./galera/dc/grastate1.dat:/var/lib/mysql/grastate.dat
-            - ./init:/tmp/init
+            - ./config/dr-galera-1.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
+            - ./config/dr-server-1.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+            - ../init:/tmp/init
         hostname: drg1
         container_name: drg1
         networks:
             static-network:
                 ipv4_address: 172.20.0.6
         ports:
-            - "4001:3306"
+            - "4006:3306"
 
     dr-node2:
         build:
@@ -127,7 +102,7 @@ services:
             static-network:
                 ipv4_address: 172.20.0.7
         ports:
-            - "4002:3306"
+            - "4007:3306"
 
     dr-node3:
         build:
@@ -148,41 +123,12 @@ services:
             static-network:
                 ipv4_address: 172.20.0.8
         ports:
-            - "4003:3306"
-    dr-maxscale:
-        image: mariadb/maxscale:2.5
-        privileged: true
-        cap_add:
-            - SYS_ADMIN
-        security_opt:
-            - seccomp:unconfined
-        volumes:
-            - ./config/dr-maxscale.cnf:/etc/maxscale.cnf
-            - ./init/monitor.sh:/var/lib/maxscale/monitor.sh
-        depends_on:
-            - node1
-            - node2
-            - node3
-        hostname: drmxs
-        container_name: drmxs
-        networks:
-            static-network:
-                ipv4_address: 172.20.0.9
-        ports:
-            - "4006:4006"  # readwrite port
-            - "4008:4008"  # readonly port
-            - "8989:8989"  # REST API port
+            - "4008:3306"
 networks:
     static-network:
+        name: static-network
         ipam:
             config:
                 - subnet: 172.20.0.0/16
                   ip_range: 172.20.5.0/24
                   gateway: 172.20.5.254
-volumes:
-    dc-galera1:
-    dc-galera2:
-    dc-galera3:
-    dr-galera1:
-    dr-galera2:
-    dr-galera3:

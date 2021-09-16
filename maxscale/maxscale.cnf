@@ -1,0 +1,4 @@
+[maxscale]
+threads=auto
+admin_secure_gui=false
+admin_host=0.0.0.0

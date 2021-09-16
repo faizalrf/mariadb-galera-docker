@@ -8,7 +8,7 @@ wsrep_cluster_address=gcomm://172.20.0.2,172.20.0.3,172.20.0.4
 wsrep_cluster_name=DC
 
 # Local node setup
-wsrep_node_address=172.20.0.4
-wsrep_node_name=galera-dc-3
+wsrep_node_address=172.20.0.3
+wsrep_node_name=galera-dc-2
 
-wsrep_provider_options="gcache.size=1G; gcache.recover=yes; gcs.fc_factor=0.8;"
+wsrep_provider_options="gcache.size=512M; gcache.recover=yes; gcs.fc_factor=0.8;"
