@@ -12,15 +12,36 @@ echo "y" | docker volume prune
 sleep 3
 
 cd galera
-docker-compose up --detach --build
-cd ..
+echo "Building MariaDB servers"
 
+docker-compose up --detach --build
 sleep 3
 
-cd maxscale
-docker-compose up --detach --build
+echo "Copying the config files for the cluster and server"
+for i in 3 2 1
+do
+    for j in dc dr
+    do
+        echo "Pushing config for ${j}-node${i}"
+        docker cp ./config/${j}-galera-${i}.cnf ${j}g${i}:/etc/mysql/mariadb.conf.d/60-galera.cnf
+        docker cp ./config/${j}-server-${i}.cnf ${j}g${i}:/etc/mysql/mariadb.conf.d/50-server.cnf
+        docker container restart ${j}g${i}
+    done
+done
+
+#echo "Galera/Server config set, restarting cluster"
+#docker-compose restart
+cd ..
+
+echo "Waiting for cluster to be available"
+sleep 10
 
 docker container exec dcg1 bash -c "mariadb -uroot < /tmp/init/01.sql"
 docker container exec drg1 bash -c "mariadb -uroot < /tmp/init/01.sql"
+
+echo "Cluster restarted, setting up MaxScale"
+cd maxscale
+docker-compose up --detach --build
+echo "MaxScale up and ready"
 
 cd ${CurrentFolder}

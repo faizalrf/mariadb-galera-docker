@@ -16,21 +16,21 @@ log_notice=on
 log_warning=off
  
 # List of servers in the Cluster
-[Galera-1]
+[DC-Galera-1]
 type=server
 address=172.20.0.2
 port=3306
 protocol=MariaDBBackend
 priority=1
  
-[Galera-2]
+[DC-Galera-2]
 type=server
 address=172.20.0.3
 port=3306
 protocol=MariaDBBackend
 priority=2
  
-[Galera-3]
+[DC-Galera-3]
 type=server
 address=172.20.0.4
 port=3306
@@ -41,7 +41,7 @@ priority=3
 [Galera-Monitor]
 type=monitor
 module=galeramon
-servers=Galera-1,Galera-2,Galera-3
+servers=DC-Galera-1,DC-Galera-2,DC-Galera-3
 user=mxs
 password=password
 monitor_interval=1000
@@ -61,7 +61,7 @@ script=/var/lib/maxscale/monitor.sh --initiator=$INITIATOR --parent=$PARENT --ch
 [Galera-RW-Service]
 type=service
 router=readwritesplit
-servers=Galera-1,Galera-2,Galera-3
+servers=DC-Galera-1,DC-Galera-2,DC-Galera-3
 user=mxs
 password=password
 master_reconnection=true
