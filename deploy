@@ -25,12 +25,13 @@ do
         echo "Pushing config for ${j}-node${i}"
         docker cp ./config/${j}-galera-${i}.cnf ${j}g${i}:/etc/mysql/mariadb.conf.d/60-galera.cnf
         docker cp ./config/${j}-server-${i}.cnf ${j}g${i}:/etc/mysql/mariadb.conf.d/50-server.cnf
-        docker container restart ${j}g${i}
     done
 done
 
-#echo "Galera/Server config set, restarting cluster"
-#docker-compose restart
+echo "Galera/Server config set, restarting cluster"
+docker-compose stop
+sleep 5
+docker-compose start
 cd ..
 
 echo "Waiting for cluster to be available"
