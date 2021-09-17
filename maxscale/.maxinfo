@@ -1,7 +1,0 @@
-remoteMaxScale=<Remote MaxSclae IP>
-remoteMaxScaleName=<User Defined MaxScale Name>
-repuser=<Replication User Name>
-reppwd=<Replication User Password>
-remoteMaxScaleReplicationPort=<MaxScale Replicaton Port>
-maxuser=<MaxScale User Name>
-maxpwd=<MaxScale User Password>

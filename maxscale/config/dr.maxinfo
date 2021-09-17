@@ -1,0 +1,9 @@
+# This config will be deployed on the DR MaxScale node, hence it's pointing to the DR MaxScale as the remoteMaxScale
+remoteMaxScale=172.20.0.5
+remoteMaxScaleName=DC-MaxScale
+repuser=mxs
+reppwd=password
+remoteMaxScaleReplicationPort=4006
+maxuser=mxs
+maxpwd=password
+logPath=/var/log/maxscale

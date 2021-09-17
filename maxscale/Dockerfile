@@ -19,7 +19,7 @@ RUN apt -y update && \
 
 COPY maxscale.cnf /etc/
 COPY monitor.sh /var/lib/maxscale
-COPY .maxinfo /var/lib/maxscale
+RUN touch /var/lib/maxscale/.maxinfo
 
 RUN chown maxscale:maxscale /var/lib/maxscale/.maxinfo && chown maxscale:maxscale /var/lib/maxscale/monitor.sh
 RUN chmod 400 /var/lib/maxscale/.maxinfo && chmod 750 /var/lib/maxscale/monitor.sh

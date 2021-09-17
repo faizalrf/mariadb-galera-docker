@@ -12,7 +12,7 @@ services:
         volumes:
             - ./config/dc-maxscale.cnf:/etc/maxscale.cnf
             - ./monitor.sh:/var/lib/maxscale/monitor.sh
-            - ./.maxinfo:/var/lib/maxscale/.maxinfo
+            - ./config/dc.maxinfo:/var/lib/maxscale/.maxinfo
         hostname: dcmxs
         container_name: dcmxs
         networks:
@@ -33,7 +33,7 @@ services:
         volumes:
             - ./config/dr-maxscale.cnf:/etc/maxscale.cnf
             - ./monitor.sh:/var/lib/maxscale/monitor.sh
-            - ./.maxinfo:/var/lib/maxscale/.maxinfo
+            - ./config/dr.maxinfo:/var/lib/maxscale/.maxinfo
         hostname: drmxs
         container_name: drmxs
         networks:
