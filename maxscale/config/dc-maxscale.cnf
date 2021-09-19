@@ -49,7 +49,7 @@ use_priority=true
 available_when_donor=true
  
 # This will ensure that the current master remains the master as long as it's up and dunning
-disable_master_failback=true
+# disable_master_failback=true
 backend_connect_timeout=3s
 backend_write_timeout=3s
 backend_read_timeout=3s
