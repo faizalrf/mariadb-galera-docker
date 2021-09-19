@@ -9,8 +9,6 @@ services:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 1
         volumes:
-        #    - ./config/dc-galera-1.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
-        #    - ./config/dc-server-1.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
             - ../init:/tmp/init
         hostname: dcg1
         container_name: dcg1
@@ -29,10 +27,8 @@ services:
         environment:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 0
-        #volumes:
-        #    - ./config/dc-galera-2.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
-        #    - ./config/dc-server-2.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
-            #- ./data:/var/lib/mysql
+        volumes:
+            - ../init:/tmp/init
         hostname: dcg2
         container_name: dcg2
         networks:
@@ -51,10 +47,8 @@ services:
         environment:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 0
-        #volumes:
-        #    - ./config/dc-galera-3.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
-        #    - ./config/dc-server-3.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
-            #- ./data:/var/lib/mysql
+        volumes:
+            - ../init:/tmp/init
         hostname: dcg3
         container_name: dcg3
         networks:
@@ -71,8 +65,6 @@ services:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 1
         volumes:
-        #    - ./config/dr-galera-1.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
-        #    - ./config/dr-server-1.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
             - ../init:/tmp/init
         hostname: drg1
         container_name: drg1
@@ -81,7 +73,6 @@ services:
                 ipv4_address: 172.20.0.6
         ports:
             - "4006:3306"
-
     dr-node2:
         build:
             context: .
@@ -92,9 +83,8 @@ services:
         environment:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 0
-        #volumes:
-        #    - ./config/dr-galera-2.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
-        #    - ./config/dr-server-2.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+        volumes:
+            - ../init:/tmp/init
         hostname: drg2
         container_name: drg2
         networks:
@@ -113,9 +103,8 @@ services:
         environment:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 0
-        #volumes:
-        #    - ./config/dr-galera-3.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf
-        #    - ./config/dr-server-3.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+        volumes:
+            - ../init:/tmp/init
         hostname: drg3
         container_name: drg3
         networks:
