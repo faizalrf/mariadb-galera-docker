@@ -8,7 +8,7 @@ do
     for j in dc dr
     do
         echo "Stopping MariaDB process for node ${j}g${i}"
-        docker container exec -it ${j}g${i} bash -c "mysqladmin --wait-for-all-slaves shutdown"
+        docker container exec -it ${j}g${i} bash -c "mysqladmin -uroot --wait-for-all-slaves shutdown"
         sleep 3
     done
 done

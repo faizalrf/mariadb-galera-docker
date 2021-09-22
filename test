@@ -1,9 +1,0 @@
-for i in {1..3}
-do
-    for j in dc dr
-    do
-        echo "docker cp ./config/${j}-galera-${i}.cnf:/etc/mysql/mariadb.conf.d/60-galera.cnf"
-        echo "docker cp ./config/${j}-server-${i}.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf"
-    done
-done
-

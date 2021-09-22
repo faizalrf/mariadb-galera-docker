@@ -60,10 +60,28 @@ serverStart()
 {
     j=$1
     i=$2
-    retVal=1
     docker container start ${j}g${i}
     verifyMariaDB ${j} ${i}
-    docker container exec ${j}g${i} bash -c "mariadb -uroot < /tmp/init/${j}-gtid-setup.sql"
+    #docker container exec ${j}g${i} bash -c "mariadb -uroot < /tmp/init/${j}-gtid-setup.sql"
+}
+
+stopMariaDB()
+{
+    j=$1
+    i=$2
+    echo "Stopping MariaDB process for node ${j}g${i}"
+    docker container exec -it ${j}g${i} bash -c "mysqladmin -uroot --wait-for-all-slaves shutdown"
+}
+
+stopMriaDBCluster()
+{
+    for i in 1 2 3
+    do
+        for j in dc dr
+        do
+            stopMariaDB ${j} ${i}
+        done
+    done
 }
 
 clear
@@ -100,18 +118,14 @@ do
         echo "Pushing config for ${j}-node${i}"
         docker cp ./config/${j}-galera-${i}.cnf ${j}g${i}:/etc/mysql/mariadb.conf.d/60-galera.cnf
         docker cp ./config/${j}-server-${i}.cnf ${j}g${i}:/etc/mysql/mariadb.conf.d/50-server.cnf
-        #serverStart ${j} ${i}
     done
 done
 echo "Restarting Cluster one last time"
-docker-compose restart
-sleep 3
-cd ..
 
-echo "Cluster restarted, setting up MaxScale"
-cd maxscale
-docker-compose up --detach --build
-echo "MaxScale up and ready"
+stopMriaDBCluster
+docker-compose restart
+cd ..
+sleep 3
 
 for i in 1 2 3
 do
@@ -122,5 +136,10 @@ do
         docker container exec ${j}g${i} bash -c "mariadb -uroot < /tmp/init/${j}-gtid-setup.sql"
     done
 done
+
+echo "Cluster restarted, setting up MaxScale"
+cd maxscale
+docker-compose up --detach --build
+echo "MaxScale up and ready"
 
 cd ${CurrentFolder}
