@@ -24,3 +24,9 @@ collation-server = utf8_unicode_ci
 
 ## Allow server to accept connections on all interfaces.
 bind-address=0.0.0.0
+
+[sst]
+inno-backup-opts="--parallel=2"
+inno-apply-opts="--use-memory=1024M"
+compressor="pigz"
+decompressor="pigz -d"
