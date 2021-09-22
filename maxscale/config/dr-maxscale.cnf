@@ -66,7 +66,6 @@ user=mxs
 password=password
 master_reconnection=true
 transaction_replay=true
-transaction_replay_retry_on_deadlock=true
 master_failure_mode=error_on_write
  
 # Galera cluster listener
