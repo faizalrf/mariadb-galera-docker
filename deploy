@@ -123,9 +123,26 @@ done
 echo "Restarting Cluster one last time"
 
 stopMriaDBCluster
-docker-compose restart
+
+echo "Setting Up Galera"
+for i in 1 2 3
+do
+    for j in dc dr
+    do
+        echo "Restarting ${j}-node${i}"
+        docker container start ${j}g${i}
+        verifyMariaDB ${j} ${i}
+        sleep 5
+    done
+done
+
 cd ..
 sleep 3
+
+verifyMariaDB dc 1
+docker container exec dcg1 bash -c "mariadb -uroot < /tmp/init/02.sql"
+verifyMariaDB dr 1
+docker container exec drg1 bash -c "mariadb -uroot < /tmp/init/02.sql"
 
 for i in 1 2 3
 do

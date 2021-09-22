@@ -2,7 +2,7 @@
 log_error=server.log
 binlog_format=row
 log_slave_updates=ON
-
+log_warning=4
 log_bin
 skip-slave-start=ON
 
