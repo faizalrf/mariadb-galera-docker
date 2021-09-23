@@ -1,0 +1,15 @@
+#!/bin/bash
+
+docker container exec dcg1 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg1_Tab1 FROM testdb.tab1\""
+docker container exec dcg2 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg2_Tab1 FROM testdb.tab1\""
+docker container exec dcg3 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg3_Tab1 FROM testdb.tab1\""
+docker container exec drg1 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg1_Tab1 FROM testdb.tab1\""
+docker container exec drg2 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as drg2_Tab1 FROM testdb.tab1\""
+docker container exec drg3 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as drg3_Tab1 FROM testdb.tab1\""
+
+docker container exec dcg1 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg1_Tab2 FROM testdb.tab2\""
+docker container exec dcg2 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg2_Tab2 FROM testdb.tab2\""
+docker container exec dcg3 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg3_Tab2 FROM testdb.tab2\""
+docker container exec drg1 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg1_Tab2 FROM testdb.tab2\""
+docker container exec drg2 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as drg2_Tab2 FROM testdb.tab2\""
+docker container exec drg3 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as drg3_Tab2 FROM testdb.tab2\""

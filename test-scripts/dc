@@ -6,7 +6,7 @@ PassWord=password
 maxHost=127.0.0.1
 Port=5001
 
-mariadb -u ${UserName} -p${PassWord} -h${maxHost} -P${Port} -e "DROP DATABASE IF EXISTS testdb; CREATE DATABASE IF NOT EXISTS testdb; CREATE TABLE IF NOT EXISTS testdb.${TableName} (id serial, c1 varchar(100), ts timestamp(6));"
+mariadb -u ${UserName} -p${PassWord} -h${maxHost} -P${Port} -e "DROP TABLE IF EXISTS testdb.${TableName}; CREATE DATABASE IF NOT EXISTS testdb; CREATE TABLE IF NOT EXISTS testdb.${TableName} (id serial, c1 varchar(100), ts timestamp(6));"
 
 i=1
 while [ $? -eq 0 ]

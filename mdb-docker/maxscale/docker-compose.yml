@@ -1,0 +1,48 @@
+version: '3'
+services:
+    dc-maxscale:
+        build:
+            context: .
+        image: mxs
+        privileged: true
+        cap_add:
+            - SYS_ADMIN
+        security_opt:
+            - seccomp:unconfined
+        volumes:
+            - ./config/dc-maxscale.cnf:/etc/maxscale.cnf
+            - ./monitor.sh:/var/lib/maxscale/monitor.sh
+            - ./config/dc.maxinfo:/var/lib/maxscale/.maxinfo
+        hostname: dcmxs
+        container_name: dcmxs
+        networks:
+            static-network:
+                ipv4_address: 172.20.0.5
+        ports:
+            - "5001:4006"  # readwrite port
+            - "8985:8989"  # REST API port
+    dr-maxscale:
+        build:
+            context: .
+        image: mxs
+        privileged: true
+        cap_add:
+            - SYS_ADMIN
+        security_opt:
+            - seccomp:unconfined
+        volumes:
+            - ./config/dr-maxscale.cnf:/etc/maxscale.cnf
+            - ./monitor.sh:/var/lib/maxscale/monitor.sh
+            - ./config/dr.maxinfo:/var/lib/maxscale/.maxinfo
+        hostname: drmxs
+        container_name: drmxs
+        networks:
+            static-network:
+                ipv4_address: 172.20.0.9
+        ports:
+            - "5002:4006"  # readwrite port
+            - "8989:8989"  # REST API port
+networks:
+    static-network:
+        name: static-network
+        external: true
