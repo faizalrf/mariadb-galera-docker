@@ -1,0 +1,18 @@
+#!/bin/bash
+echo "+-------------------------------------+"
+echo "| Record Count Report from all nodes  |"
+echo "+-------------------------------------+"
+docker container exec dcg1 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DC-Node1 tab1: ', COUNT(*)) FROM tab1\""
+docker container exec dcg2 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DC-Node2 tab1: ', COUNT(*)) FROM tab1\""
+docker container exec dcg3 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DC-Node3 tab1: ', COUNT(*)) FROM tab1\""
+docker container exec drg1 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DR-Node1 tab1: ', COUNT(*)) FROM tab1\""
+docker container exec drg2 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DR-Node2 tab1: ', COUNT(*)) FROM tab1\""
+docker container exec drg3 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DR-Node3 tab1: ', COUNT(*)) FROM tab1\""
+echo
+docker container exec dcg1 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DC-Node1 tab2: ', COUNT(*)) FROM tab2\""
+docker container exec dcg2 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DC-Node2 tab2: ', COUNT(*)) FROM tab2\""
+docker container exec dcg3 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DC-Node3 tab2: ', COUNT(*)) FROM tab2\""
+docker container exec drg1 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DR-Node1 tab2: ', COUNT(*)) FROM tab2\""
+docker container exec drg2 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DR-Node2 tab2: ', COUNT(*)) FROM tab2\""
+docker container exec drg3 bash -c "mariadb -N -uroot testdb -e \"SELECT CONCAT('DR-Node3 tab2: ', COUNT(*)) FROM tab2\""
+echo "+-------------------------------------+"

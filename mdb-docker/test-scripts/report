@@ -1,7 +1,0 @@
-docker container exec dcg1 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg1Tab1 FROM testdb.tab1\""
-docker container exec dcg2 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg2Tab1 FROM testdb.tab1\""
-docker container exec dcg3 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg3Tab1 FROM testdb.tab1\""
-docker container exec drg1 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as dcg1Tab1 FROM testdb.tab1\""
-docker container exec drg2 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as drg2Tab1 FROM testdb.tab1\""
-docker container exec drg3 bash -c "mariadb -uroot -e \"SELECT COUNT(*) as drg3Tab1 FROM testdb.tab1\""
-

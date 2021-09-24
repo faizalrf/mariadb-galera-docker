@@ -2,13 +2,13 @@
 log_error=server.log
 binlog_format=row
 log_slave_updates=ON
-log_warning=4
 log_bin
+sync_binlog=1
 skip-slave-start=ON
 
-gtid_domain_id=81
+gtid_domain_id=71
 gtid-ignore-duplicates=ON
-server_id=8000
+server_id=7000
 default_storage_engine=InnoDB
 innodb_autoinc_lock_mode=2
 innodb_lock_schedule_algorithm=FCFS
@@ -16,7 +16,7 @@ innodb_flush_log_at_trx_commit=0
 #innodb_buffer_pool_size=512M
 #innodb_log_file_size=512M
 
-auto_increment_offset=4
+auto_increment_offset=1
 auto_increment_increment=6
 
 character-set-server = utf8

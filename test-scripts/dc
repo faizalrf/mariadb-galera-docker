@@ -14,7 +14,7 @@ do
     echo "USE testdb -A;"
     echo "INSERT INTO ${TableName}(id, c1) VALUES ('${i}', CONCAT('Data - ', ROUND(RAND() * 100000, 0)));"
     echo "UPDATE ${TableName} SET c1 = CONCAT('Updated - ', current_timestamp(6)) WHERE id > '${i}' LIMIT 3;"
-    echo -e "SELECT concat('SELECT FROM ${TableName} on ', @@hostname, ' ->'), rpad('${i}', 20, '.'), 
+    echo -e "SELECT concat('SELECT FROM ${TableName} on ', @@hostname, ' ->'), '${i}', 
                 IF(COUNT(*)> 0, '\033[0;32mRecord Found\033[0m','\033[0;31m! Not Found !\033[0m' ) 
             FROM ${TableName} WHERE id = '${i}';"
     sleep 0.05

@@ -4,7 +4,6 @@ i=$3
 if [ ${action} == "stop" ]; then
     echo "Stopping node ${j}g${i}"
     docker container exec -it ${j}g${i} bash -c "mysqladmin -uroot --wait-for-all-slaves shutdown"
-    #docker container stop ${j}g${i}
 fi
 if [ ${action} == "start" ]; then
     echo "Starting node ${j}g${i}"
