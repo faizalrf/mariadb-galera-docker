@@ -1,9 +1,0 @@
-#!/bin/bash
-CurrentFolder=$(pwd)
-
-cd galera
-docker-compose start
-cd ../maxscale
-docker-compose start
-cd ${CurrentFolder}
-

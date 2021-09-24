@@ -1,2 +1,0 @@
-# MariaB Galera Cluster
-

@@ -13,4 +13,4 @@ wsrep_sst_auth=mariabackup:password
 wsrep_node_address=172.20.0.7
 wsrep_node_name=galera-dr-2
 
-wsrep_provider_options="gcache.size=1G; gcache.recover=yes; gcs.fc_factor=0.8;"
+wsrep_provider_options="gcache.size=1G; gcache.recover=yes;"

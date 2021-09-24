@@ -64,6 +64,7 @@ router=readwritesplit
 servers=DC-Galera-1,DC-Galera-2,DC-Galera-3
 user=mxs
 password=password
+slave_selection_criteria=ADAPTIVE_ROUTING
 master_reconnection=true
 transaction_replay=true
 master_failure_mode=error_on_write
