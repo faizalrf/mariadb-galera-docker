@@ -34,6 +34,7 @@
 # maxuser=<MaxScale User Name>
 # maxpwd=<MaxScale User Password>
 # logPath=/var/log/maxscale
+# slavePosPrefix=70-7000 or 80-8000
 
 # Set ownership if this file to maxuser:maxuser
 #  chown maxscale:maxscale /var/lib/maxscale/.maxinfo
@@ -203,7 +204,8 @@ else
                   writeLog "slave_pos_seq_no = ${slave_pos_seq_no}"
                   writeLog "binlog_seq_num = ${binlog_seq_num}"
 
-                  gtid_seq=$(if [ "${slave_pos_seq_no}" \> "${binlog_seq_num}" ]; then echo ${slave_pos_seq_no}; else echo ${binlog_seq_num}; fi)
+                  # Replaced \> with -gt because > cannot compare the values as strings and gives the wrong result
+                  gtid_seq=$(if [ ${slave_pos_seq_no} -gt ${binlog_seq_num} ]; then echo ${slave_pos_seq_no}; else echo ${binlog_seq_num}; fi)
                   writeLog "gtid_seq = ${gtid_seq}"
 
                   slave_pos_list+=(`echo "${slave_pos_noseq}-${gtid_seq}"`)
