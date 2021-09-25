@@ -35,7 +35,6 @@
 # maxuser=<MaxScale User Name>
 # maxpwd=<MaxScale User Password>
 # logPath=/var/log/maxscale
-# slavePosPrefix=70-7000 or 80-8000
 
 # Set ownership if this file to maxuser:maxuser
 #  chown maxscale:maxscale /var/lib/maxscale/.maxinfo
