@@ -14,7 +14,7 @@ do
     for j in dc dr
     do
         echo "Starting MariaDB process for node ${j}g${i}"
-        serverStart dcg${i}
+        serverStart ${j}g${i}
     done
 done
 

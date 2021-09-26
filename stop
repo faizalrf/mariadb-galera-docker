@@ -3,14 +3,14 @@ CurrentFolder=$(pwd)
 
 cd maxscale
 docker-compose stop
-cd ../galera
+cd ${CurrentFolder}
 
 for i in 3 2 1
 do
     for j in dc dr
     do
         strContainer=${j}g${i}
-        ./node stop ${j} ${i}
+        ./node stop ${j}g${i}
     done
 done
 
