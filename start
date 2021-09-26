@@ -1,9 +1,22 @@
 #!/bin/bash
+source library
+
 CurrentFolder=$(pwd)
 
-cd galera
+cd maxscale
 docker-compose start
-cd ../maxscale
-docker-compose start
+sleep 5
+
+cd ../galera
+
+for i in 1 2 3
+do
+    for j in dc dr
+    do
+        echo "Starting MariaDB process for node ${j}g${i}"
+        serverStart dcg${i}
+    done
+done
+
 cd ${CurrentFolder}
 

@@ -1,11 +1,14 @@
+#!/bin/bash
+source library
+
 action=$1
-j=$2
-i=$3
+containerName=$2
+
 if [ ${action} == "stop" ]; then
-    echo "Stopping node ${j}g${i}"
-    docker container exec -it ${j}g${i} bash -c "mysqladmin -uroot --wait-for-all-slaves shutdown"
+    echo "Stopping node ${containerName}"
+    docker container exec -it ${containerName} bash -c "mysqladmin -uroot --wait-for-all-slaves shutdown"
 fi
 if [ ${action} == "start" ]; then
-    echo "Starting node ${j}g${i}"
-    docker container start ${j}g${i}
+    echo "Starting node ${containerName}"
+    serverStart ${containerName}
 fi

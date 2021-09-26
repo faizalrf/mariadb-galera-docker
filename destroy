@@ -3,8 +3,10 @@ CurrentFolder=$(pwd)
 
 cd maxscale
 docker-compose down
+
 cd ../galera
 docker-compose down
 cd ..
 echo "y" | docker volume prune
+
 cd ${CurrentFolder}

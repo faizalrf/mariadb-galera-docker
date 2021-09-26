@@ -1,19 +1,17 @@
 #!/bin/bash
+source library
 
 echo "Shutting Down MaxScale!"
-./maxsale/docker-compose stop
+./maxsale/docker-compose restart
 sleep 5
 for i in 1 2 3
 do
     for j in dc dr
     do
-        echo "Stopping MariaDB process for node ${j}g${i}"
-        docker container exec -it ${j}g${i} bash -c "mysqladmin -uroot --wait-for-all-slaves shutdown"
-        sleep 3
+        strContainer=${j}g${i}
+        echo "Stopping MariaDB process for node ${strContainer}"
+        ./node stop ${j}g${i}
+        serverStart ${j}g${i}
+
     done
 done
-echo "Restarting Cluster!"
-./galera/docker-compose restart
-sleep 5
-echo "Starting Up MaxScale!"
-./maxsale/docker-compose start

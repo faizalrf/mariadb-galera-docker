@@ -76,3 +76,20 @@ service=Galera-RW-Service
 protocol=MariaDBClient
 port=4006
 address=0.0.0.0
+
+# Galera Replication service
+[Replication-Service]
+type=service
+router=readconnroute
+user=mxs
+password=password
+servers=DR-Galera-1,DR-Galera-2,DR-Galera-3
+router_options=master
+
+# Galera cluster listener
+[Galera-Replication-Listener]
+type=listener
+service=Replication-Service
+protocol=MariaDBClient
+port=4007
+address=0.0.0.0

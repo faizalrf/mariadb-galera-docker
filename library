@@ -1,0 +1,88 @@
+#!/bin/bash
+
+verifyMariaDB() {
+    local strContainer="$*"
+    retVal=1
+
+    #Global retry counters
+    maxRetryPrimary=1
+    sleep 5
+    while [[ ${retVal} != 0 ]]
+    do
+        echo "Test ${maxRetryPrimary}: ${strContainer}"
+        # If the SQL did not return a proper status
+        Status=$(docker container exec -it ${strContainer} bash -c "mysqladmin -uroot ping")
+        if [[ ${Status} == *"mysqld is alive"* ]]; then
+            echo "Test ${maxRetryPrimary}: Container ${strContainer} ping successful"
+            successRetry=1
+            maxRetry=1
+            while [[ ${maxRetry} < 6 ]]
+            do
+                retryStatus=$(docker container exec -it ${strContainer} bash -c "mysqladmin -uroot ping")
+                #if [ $? -ne 0 ]; then
+                if [[ ${retryStatus} == *"mysqld is alive"* ]]; then
+                    ((successRetry=successRetry+1))
+                    echo -ne "."
+                else
+                    echo "MariaDB on ${strContainer} is NOT available"
+                    sleep 1
+                    echo "Test RESET: Retrying MariaDB availability on ${strContainer}"
+                    successRetry=1
+                fi
+                ((maxRetry=maxRetry+1))
+            done
+            echo ""
+            if [ ${successRetry} -gt 5 ]; then
+                retVal=0
+            else
+                retVal=1
+            fi
+        else
+            echo "Test ${maxRetryPrimary}: Container ${strContainer} ping failed!"
+            sleep 5
+        fi
+        ((maxRetryPrimary=maxRetryPrimary+1))
+        if [[ ${maxRetryPrimary} == 10 ]]; then
+            echo "Failed to validate node ${strContainer} ! ! !"
+            echo "Aborting!"
+            exit 0
+        fi
+    done
+    echo "Container ${strContainer} Status Verified"
+    echo ""
+}
+
+serverStart() {
+    local strContainer="$*"
+    docker container start ${strContainer} > /dev/null
+    verifyMariaDB ${strContainer}
+}
+
+stopMariaDB() {
+    local strContainer="$*"
+    echo "Stopping MariaDB process for node ${strContainer}"
+    docker container exec -it ${strContainer} bash -c "mysqladmin -uroot --wait-for-all-slaves shutdown"
+}
+
+stopMriaDBCluster() {
+    for i in 1 2 3
+    do
+        stopMariaDB dcg${i} 
+        stopMariaDB drg${i}
+    done
+}
+
+bootstrap() {
+    local strContainer="$*"
+    docker container exec ${strContainer} bash -c "touch /var/lib/mysql/bootstrap.ind"
+    echo "Node ${strContainer} is set to bootstrap next time the cluster starts"
+}
+
+trim() {
+    local strArg="$*"
+    # remove leading whitespace characters
+    var="${strArg#"${strArg%%[![:space:]]*}"}"
+    # remove trailing whitespace characters
+    var="${strArg%"${strArg##*[![:space:]]}"}"   
+    printf '%s' "$strArg"
+}

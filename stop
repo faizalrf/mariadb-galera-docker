@@ -5,15 +5,17 @@ cd maxscale
 docker-compose stop
 cd ../galera
 
-for i in 1 2 3
+for i in 3 2 1
 do
     for j in dc dr
     do
-        echo "Stopping MariaDB process for node ${j}g${i}"
-        docker container exec -it ${j}g${i} bash -c "mysqladmin -uroot --wait-for-all-slaves shutdown"
+        strContainer=${j}g${i}
+        ./node stop ${j} ${i}
     done
 done
 
-docker-compose stop
+docker container exec dcg1 bash -c "touch /var/lib/mysql/bootstrap.ind"
+docker container exec drg1 bash -c "touch /var/lib/mysql/bootstrap.ind"
+
 cd ${CurrentFolder}
 

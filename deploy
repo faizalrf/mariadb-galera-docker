@@ -1,87 +1,5 @@
 #!/bin/bash
-
-verifyMariaDB()
-{
-    j=$1
-    i=$2
-    retVal=1
-    echo "Waiting for MariaDB container ${j}g${i} to start"
-
-    #Global retry counters
-    maxRetryPrimary=1
-    sleep 5
-    while [[ ${retVal} != 0 ]]
-    do
-        echo "Test ${maxRetryPrimary}: ${j}g${i}"
-        # If the SQL did not return a proper status
-        Status=$(docker container exec -it ${j}g${i} bash -c "mysqladmin -uroot ping")
-        if [[ ${Status} == *"mysqld is alive"* ]]; then
-            successRetry=1
-            maxRetry=1
-            while [[ ${maxRetry} < 6 ]]
-            do
-                #docker container exec -it ${j}g${i} mariadb -uroot -e "create database tmp101db; drop database tmp101db;"
-                retryStatus=$(docker container exec -it ${j}g${i} bash -c "mysqladmin -uroot ping")
-                #if [ $? -ne 0 ]; then
-                if [[ ${retryStatus} == *"mysqld is alive"* ]]; then
-                    ((successRetry=successRetry+1))
-                    echo -ne "."
-                else
-                    echo "MariaDB on ${j}g${i} is NOT available"
-                    sleep 1
-                    echo "Test RESET: Retrying MariaDB availability on ${j}g${i}"
-                    successRetry=1
-                fi
-                ((maxRetry=maxRetry+1))
-            done
-            echo ""
-            if [ ${successRetry} -gt 5 ]; then
-                retVal=0
-            else
-                retVal=1
-            fi
-        else
-            echo "Test ${maxRetryPrimary}: Container ${j}g${i} ping failed!"
-            sleep 5
-        fi
-        ((maxRetryPrimary=maxRetryPrimary+1))
-        if [[ ${maxRetryPrimary} == 10 ]]; then
-            echo "Failed to validate node ${j}g${i} ! ! !"
-            echo "Aborting!"
-            exit 0
-        fi
-    done
-    echo "Container ${j}g${i} Status Verified"
-    echo ""
-}
-
-serverStart()
-{
-    j=$1
-    i=$2
-    docker container start ${j}g${i}
-    verifyMariaDB ${j} ${i}
-    #docker container exec ${j}g${i} bash -c "mariadb -uroot < /tmp/init/${j}-gtid-setup.sql"
-}
-
-stopMariaDB()
-{
-    j=$1
-    i=$2
-    echo "Stopping MariaDB process for node ${j}g${i}"
-    docker container exec -it ${j}g${i} bash -c "mysqladmin -uroot --wait-for-all-slaves shutdown"
-}
-
-stopMriaDBCluster()
-{
-    for i in 0 1 2 3
-    do
-        for j in dc dr
-        do
-            stopMariaDB ${j} ${i}
-        done
-    done
-}
+source library
 
 clear
 CurrentFolder=$(pwd)
@@ -98,65 +16,92 @@ cd galera
 echo "Building MariaDB servers"
 
 docker-compose up --detach --build
-
+echo 
 echo "Copying the config files for the cluster and server"
-for i in 0 1 2 3
+for i in 1 2 3
 do
     for j in dc dr
     do
-        verifyMariaDB ${j} ${i}
-        docker container exec ${j}g${i} bash -c "mariadb -uroot < /tmp/init/01.sql"
+        strContainer=${j}g${i}
+        verifyMariaDB ${strContainer}
+        docker container exec ${strContainer} bash -c "mariadb -uroot < /tmp/init/01.sql"
+        docker cp ./config/${j}-galera-${i}.cnf ${strContainer}:/etc/mysql/mariadb.conf.d/60-galera.cnf
+        docker cp ./config/${j}-server-${i}.cnf ${strContainer}:/etc/mysql/mariadb.conf.d/50-server.cnf
     done
 done
+echo "."
+echo "Set bootstrap for DC Node 1 and DR Node 1"
+bootstrap dcg1
+bootstrap drg1
 
-echo "Setting Up Galera"
-for i in 0 1 2 3
-do
-    for j in dc dr
-    do
-        echo "Pushing config for ${j}-node${i}"
-        docker cp ./config/${j}-galera-${i}.cnf ${j}g${i}:/etc/mysql/mariadb.conf.d/60-galera.cnf
-        docker cp ./config/${j}-server-${i}.cnf ${j}g${i}:/etc/mysql/mariadb.conf.d/50-server.cnf
-    done
-done
+echo "."
 echo "Restarting Cluster one last time"
 stopMriaDBCluster
 
-echo "Setting Up Galera"
-for i in 0 1 2 3
+echo "."
+echo "Starting up Cluster with Galera configuration"
+
+for i in 1 2 3
 do
     for j in dc dr
     do
-        echo "Restarting ${j}-node${i}"
-        docker container start ${j}g${i}
-        verifyMariaDB ${j} ${i}
-        sleep 5
+        strContainer=${j}g${i}
+        serverStart ${strContainer}
     done
 done
-
 cd ..
-sleep 3
 
-docker container stop dcg0 drg0
-
-verifyMariaDB dc 1
+# Create a testdb database to initiate 1st GTID
 docker container exec dcg1 bash -c "mariadb -uroot < /tmp/init/02.sql"
-verifyMariaDB dr 1
 docker container exec drg1 bash -c "mariadb -uroot < /tmp/init/02.sql"
 
 for i in 1 2 3
 do
     for j in dc dr
     do
-        echo "Setting up GTID for ${j}g${i}"
-        verifyMariaDB ${j} ${i}
-        docker container exec ${j}g${i} bash -c "mariadb -uroot < /tmp/init/${j}-gtid-setup.sql"
+        strContainer=${j}g${i}
+        echo "Setting up GTID for ${strContainer}"
+        docker container exec ${strContainer} bash -c "mariadb -uroot < /tmp/init/${j}-gtid-setup.sql"
     done
 done
 
+echo "."
 echo "Cluster restarted, setting up MaxScale"
 cd maxscale
 docker-compose up --detach --build
+sleep 5
 echo "MaxScale up and ready"
+echo "."
+# Execute CHANGE MASTER for both sides to set up replication
+echo "Setting up replication between dcg1 <-> drmxs & drg1 <-> dcmxs"
+docker container exec dcg1 bash -c "mariadb -uroot < /tmp/init/dc-replication.sql"
+docker container exec drg1 bash -c "mariadb -uroot < /tmp/init/dr-replication.sql"
+
+dcStatus=$(docker container exec dcg1 bash -c "mariadb -uroot -e \"SHOW ALL SLAVES STATUS\G\"" | grep -i "running:")
+drStatus=$(docker container exec drg1 bash -c "mariadb -uroot -e \"SHOW ALL SLAVES STATUS\G\"" | grep -i "running:")
+echo 
+echo "DC -> DR"
+trim ${dcStatus}
+echo
+if [ $(echo ${dcStatus} | grep "Yes" | wc -l) -eq 2 ]; then
+    echo "Replciation DC to DR validated"
+    dcReady=1
+fi
+echo
+echo "DR -> DC"
+trim ${drStatus}
+echo
+if [ $(echo ${drStatus} | grep "Yes" | wc -l) -eq 2 ]; then
+    echo "Replciation DC to DR validated"
+    drReady=1
+fi
+
+if [ ${dcReady} -eq 1 ] && [ ${drReady} -eq 1 ]; then
+    echo "Clusters are ready..."
+else
+    echo "There were problems setting up the cluster"
+    echo "Replication Failed\!"
+fi
+echo
 
 cd ${CurrentFolder}
