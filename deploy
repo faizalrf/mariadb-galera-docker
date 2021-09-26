@@ -83,25 +83,26 @@ echo
 echo "DC -> DR"
 trim ${dcStatus}
 echo
-if [ $(echo ${dcStatus} | grep "Yes" | wc -l) -eq 2 ]; then
+setupReady=0
+if [ $(echo ${dcStatus} | grep -o "Yes" | wc -l) -eq 2 ]; then
     echo "Replciation DC to DR validated"
-    dcReady=1
+    ((setupReady=setupReady+1))
 fi
 echo
 echo "DR -> DC"
 trim ${drStatus}
 echo
-if [ $(echo ${drStatus} | grep "Yes" | wc -l) -eq 2 ]; then
+if [ $(echo ${drStatus} | grep -o "Yes" | wc -l) -eq 2 ]; then
     echo "Replciation DC to DR validated"
-    drReady=1
+    ((setupReady=setupReady+1))
 fi
-
-if [ ${dcReady} -eq 1 ] && [ ${drReady} -eq 1 ]; then
+echo 
+if [[ ${setupReady} == 2 ]]; then
     echo "Clusters are ready..."
 else
     echo "There were problems setting up the cluster"
-    echo "Replication Failed\!"
+    echo "Replication Failed"
 fi
-echo
+echo ""
 
 cd ${CurrentFolder}
