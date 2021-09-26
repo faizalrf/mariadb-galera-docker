@@ -69,9 +69,10 @@ echo "."
 echo "Cluster restarted, setting up MaxScale"
 cd maxscale
 docker-compose up --detach --build
-sleep 5
 echo "MaxScale up and ready"
+sleep 5
 echo "."
+
 # Execute CHANGE MASTER for both sides to set up replication
 echo "Setting up replication between dcg1 <-> drmxs & drg1 <-> dcmxs"
 docker container exec dcg1 bash -c "mariadb -uroot < /tmp/init/dc-replication.sql"

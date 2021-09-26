@@ -1,4 +1,4 @@
-FROM mariadb:10.6
+FROM mariadb:10.5
 
 RUN apt -y update
 RUN apt -y install pigz

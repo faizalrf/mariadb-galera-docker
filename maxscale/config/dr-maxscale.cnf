@@ -67,6 +67,8 @@ password=password
 slave_selection_criteria=ADAPTIVE_ROUTING
 master_reconnection=true
 transaction_replay=true
+delayed_retry=true
+delayed_retry_timeout=60s
 master_failure_mode=error_on_write
  
 # Galera cluster listener

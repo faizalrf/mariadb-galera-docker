@@ -13,7 +13,7 @@ RUN apt-get -y update && \
 
 RUN wget https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
 RUN chmod +x mariadb_repo_setup
-RUN ./mariadb_repo_setup --mariadb-server-version="mariadb-10.6"
+RUN ./mariadb_repo_setup --mariadb-server-version="mariadb-10.5"
 RUN apt -y update && \
     apt -y install mariadb-client
 
