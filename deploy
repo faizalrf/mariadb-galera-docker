@@ -55,15 +55,15 @@ cd ..
 docker container exec dcg1 bash -c "mariadb -uroot < /tmp/init/02.sql"
 docker container exec drg1 bash -c "mariadb -uroot < /tmp/init/02.sql"
 
-#for i in 1 2 3
-#do
-#    for j in dc dr
-#    do
-#        strContainer=${j}g${i}
-#        echo "Setting up GTID for ${strContainer}"
-#        docker container exec ${strContainer} bash -c "mariadb -uroot < /tmp/init/${j}-gtid-setup.sql"
-#    done
-#done
+for i in 1 2 3
+do
+    for j in dc dr
+    do
+        strContainer=${j}g${i}
+        echo "Setting up GTID for ${strContainer}"
+        docker container exec ${strContainer} bash -c "mariadb -uroot < /tmp/init/${j}-gtid-setup.sql"
+    done
+done
 
 echo "."
 echo "Cluster restarted, setting up MaxScale"
@@ -71,8 +71,8 @@ cd maxscale
 docker-compose up --detach --build
 echo "MaxScale up and ready"
 sleep 5
+
 echo "."
-exit 0
 # Execute CHANGE MASTER for both sides to set up replication
 echo "Setting up replication between dcg1 <-> drmxs & drg1 <-> dcmxs"
 docker container exec dcg1 bash -c "mariadb -uroot < /tmp/init/dc-replication.sql"

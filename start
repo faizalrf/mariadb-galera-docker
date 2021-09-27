@@ -4,7 +4,7 @@ source library
 CurrentFolder=$(pwd)
 
 cd maxscale
-docker-compose start
+docker-compose restart
 sleep 5
 
 cd ../galera
