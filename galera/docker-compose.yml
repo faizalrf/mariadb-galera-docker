@@ -1,35 +1,14 @@
 version: '3'
 services:
-    #dc-node0:
-    #    build:
-    #        context: .
-    #    image: mdbg
-    #    privileged: true
-    #    environment:
-    #        MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
-    #        BOOTSTRAP: 1
-    #    volumes:
-    #        - ./data/dc/node0:/var/lib/mysql
-    #        - ../init:/tmp/init
-    #    hostname: dcg0
-    #    container_name: dcg0
-    #    networks:
-    #        static-network:
-    #            ipv4_address: 172.20.0.12
-    #    ports:
-    #        - "9001:3306"
     dc-node1:
         build:
             context: .
         image: mdbg
         privileged: true
-        #depends_on:
-            #- dc-node0
         environment:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 1
         volumes:
-            #- ./data/dc/node1:/var/lib/mysql
             - ../init:/tmp/init
         hostname: dcg1
         container_name: dcg1
@@ -49,7 +28,6 @@ services:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 0
         volumes:
-            #- ./data/dc/node2:/var/lib/mysql
             - ../init:/tmp/init
         hostname: dcg2
         container_name: dcg2
@@ -70,7 +48,6 @@ services:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 0
         volumes:
-            #- ./data/dc/node3:/var/lib/mysql
             - ../init:/tmp/init
         hostname: dcg3
         container_name: dcg3
@@ -79,36 +56,15 @@ services:
                 ipv4_address: 172.20.0.4
         ports:
             - "4004:3306"
-    #dr-node0:
-    #    build:
-    #        context: .
-    #    image: mdbg
-    #    privileged: true
-    #    environment:
-    #        MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
-    #        BOOTSTRAP: 1
-    #    volumes:
-    #        - ./data/dr/node0:/var/lib/mysql
-    #        - ../init:/tmp/init
-    #    hostname: drg0
-    #    container_name: drg0
-    #    networks:
-    #        static-network:
-    #            ipv4_address: 172.20.0.22
-    #    ports:
-    #        - "9002:3306"
     dr-node1:
         build:
             context: .
         image: mdbg
         privileged: true
-        #depends_on:
-        #    - dr-node0
         environment:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 1
         volumes:
-            #- ./data/dr/node1:/var/lib/mysql
             - ../init:/tmp/init
         hostname: drg1
         container_name: drg1
@@ -128,7 +84,6 @@ services:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 0
         volumes:
-            #- ./data/dr/node2:/var/lib/mysql
             - ../init:/tmp/init
         hostname: drg2
         container_name: drg2
@@ -148,7 +103,6 @@ services:
             MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'Y'
             BOOTSTRAP: 0
         volumes:
-            #- ./data/dr/node3:/var/lib/mysql
             - ../init:/tmp/init
         hostname: drg3
         container_name: drg3
