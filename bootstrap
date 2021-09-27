@@ -1,0 +1,9 @@
+#!/bin/bash
+
+touch bootstrap.ind
+docker container cp bootstrap.ind $1:/var/lib/mysql/bootstrap.ind
+docker cp $1:/var/lib/mysql/grastate.dat .
+sed -i -e 's/safe_to_bootstrap: 0/safe_to_bootstrap: 1/g' ./grastate.dat
+docker container cp ./grastate.dat $1:/var/lib/mysql/
+rm -rf bootstrap.ind
+rm -rf grastate.dat
