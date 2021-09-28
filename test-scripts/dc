@@ -7,15 +7,14 @@ PassWord=password
 maxHost=127.0.0.1
 Port=5001
 
-mariadb -u ${UserName} -p${PassWord} -h${maxHost} -P${Port} -e "CREATE DATABASE IF NOT EXISTS ${dbName}; CREATE TABLE IF NOT EXISTS testdb.${TableName} (id varchar(20) not null primary key, c1 varchar(100), ts timestamp(6));"
+mariadb -u ${UserName} -p${PassWord} -h${maxHost} -P${Port} -e "CREATE DATABASE IF NOT EXISTS ${dbName}; CREATE TABLE IF NOT EXISTS ${dbName}.${TableName} (id varchar(20) not null primary key, c1 varchar(100), c2 varchar(100), c3 varchar(100), ts timestamp(6));"
 
 while [ $? -eq 0 ]
 do
     i=$(openssl rand -hex 8)
-    echo "INSERT INTO ${TableName}(id, c1) VALUES ('${i}', CONCAT('Data - ', ROUND(RAND() * 100000, 0)));"
-    echo "UPDATE ${TableName} SET c1 = CONCAT('Updated - ', current_timestamp(6)) WHERE id > '${i}' LIMIT 3;"
+    echo "INSERT INTO ${TableName}(id, c1, c2, c3) VALUES ('${i}', CONCAT('Data - ', ROUND(RAND() * 100000, 0)), CONCAT('Data - ', ROUND(RAND() * 100000, 0)), CONCAT('Data - ', ROUND(RAND() * 100000, 0)));"
     echo -e "SELECT concat('SELECT FROM ${TableName} on ', @@hostname, ' ->'), '${i}', 
                 IF(COUNT(*)> 0, '\033[0;32mRecord Found\033[0m','\033[0;31m! Not Found !\033[0m' ) 
             FROM ${TableName} WHERE id = '${i}';"
-    sleep 0.05
+    sleep 0.03
 done | mariadb ${dbName} -N -u ${UserName} -p${PassWord} -h${maxHost} -P${Port}
