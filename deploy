@@ -13,11 +13,11 @@ cd ..
 echo "y" | docker volume prune
 
 cd galera
-echo "Building MariaDB servers"
+echo "Building MariaDB servers."
 
 docker-compose up --detach --build
 echo 
-echo "Copying the config files for the cluster and server"
+echo "Copying the config files for the cluster and server."
 for i in 1 2 3
 do
     for j in dc dr
@@ -30,16 +30,16 @@ do
     done
 done
 echo "."
-echo "Set bootstrap for DC Node 1 and DR Node 1"
+echo "Set bootstrap for DC Node 1 and DR Node 1."
 bootstrap dcg1
 bootstrap drg1
 
 echo "."
-echo "Restarting Cluster one last time"
+echo "Restarting Cluster one last time."
 stopMriaDBCluster
 
 echo "."
-echo "Starting up Cluster with Galera configuration"
+echo "Starting up Cluster with Galera configuration."
 
 for i in 1 2 3
 do
@@ -66,10 +66,10 @@ do
 done
 
 echo "."
-echo "Cluster restarted, setting up MaxScale"
+echo "Cluster restarted, setting up MaxScale."
 cd maxscale
 docker-compose up --detach --build
-echo "MaxScale up and ready"
+echo "MaxScale up and ready."
 sleep 5
 
 echo "."
@@ -86,7 +86,7 @@ trim ${dcStatus}
 echo
 setupReady=0
 if [ $(echo ${dcStatus} | grep -o "Yes" | wc -l) -eq 2 ]; then
-    echo "Replciation DC to DR validated"
+    echo "Replciation DC to DR validated."
     ((setupReady=setupReady+1))
 fi
 echo
@@ -94,15 +94,15 @@ echo "DR -> DC"
 trim ${drStatus}
 echo
 if [ $(echo ${drStatus} | grep -o "Yes" | wc -l) -eq 2 ]; then
-    echo "Replciation DC to DR validated"
+    echo "Replication DC to DR validated."
     ((setupReady=setupReady+1))
 fi
 echo 
 if [[ ${setupReady} == 2 ]]; then
     echo "Clusters are ready..."
 else
-    echo "There were problems setting up the cluster"
-    echo "Replication Failed"
+    echo "There were problems setting up the cluster."
+    echo "Replication Failed."
 fi
 echo ""
 
