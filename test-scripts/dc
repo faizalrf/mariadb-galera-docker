@@ -12,9 +12,10 @@ mariadb -u ${UserName} -p${PassWord} -h${maxHost} -P${Port} -e "CREATE DATABASE 
 while [ $? -eq 0 ]
 do
     i=$(openssl rand -hex 8)
+    echo "SET SESSION wsrep_sync_wait=1;"
     echo "INSERT INTO ${TableName}(id, c1, c2, c3) VALUES ('${i}', CONCAT('Data - ', ROUND(RAND() * 100000, 0)), CONCAT('Data - ', ROUND(RAND() * 100000, 0)), CONCAT('Data - ', ROUND(RAND() * 100000, 0)));"
     echo -e "SELECT concat('SELECT FROM ${TableName} on ', @@hostname, ' ->'), '${i}', 
-                IF(COUNT(*)> 0, '\033[0;32mRecord Found\033[0m','\033[0;31m! Not Found !\033[0m' ) 
+                IF(COUNT(*)> 0, '\033[0;32mRecord Found\033[0m','\033[0;31m! Not Found !\033[0m' )
             FROM ${TableName} WHERE id = '${i}';"
-    sleep 0.03
+    sleep 0.05
 done | mariadb ${dbName} -N -u ${UserName} -p${PassWord} -h${maxHost} -P${Port}

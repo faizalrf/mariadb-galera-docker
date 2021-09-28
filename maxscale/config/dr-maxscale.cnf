@@ -71,6 +71,7 @@ delayed_retry=true
 delayed_retry_timeout=60s
 prune_sescmd_history=true
 lazy_connect=true
+#filters=CCRFilter
 
 # Galera cluster listener
 [Galera-Listener]
@@ -79,3 +80,9 @@ service=Galera-RW-Service
 protocol=MariaDBClient
 port=4006
 address=0.0.0.0
+
+[CCRFilter]
+type=filter
+module=ccrfilter
+global=true
+time=1s
