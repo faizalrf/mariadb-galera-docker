@@ -28,7 +28,9 @@ collation-server = utf8_unicode_ci
 bind-address=0.0.0.0
 
 [sst]
+streamfmt=xbstream
+transferfmt=socat
 inno-backup-opts="--parallel=2"
 inno-apply-opts="--use-memory=1024M"
 compressor="pigz"
-decompressor="pigz -d"
+decompressor="pigz -dc"
